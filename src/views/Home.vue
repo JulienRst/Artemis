@@ -69,7 +69,7 @@ export default class HomeView extends Vue {
 		this.camera.position.x = this.car.mesh.position.x;
 		this.camera.position.y = this.car.mesh.position.y + 2;
 		this.camera.position.z = this.car.mesh.position.z + 5;
-		this.camera.lookAt(this.car.mesh.position);
+		this.camera.lookAt(this.ball.mesh.position);
 	}
 
 	private calculate () {
