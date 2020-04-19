@@ -1,18 +1,90 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+	<div id="render-view" tabindex="0"></div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import * as THREE from 'three';
+import WindowControl, { ScreenSize } from '@/utils/WindowControl';
+import KeyboardControl from '@/utils/KeyboardControl';
+import ground from '@/models/Ground';
+import Car from '@/models/Car';
 
-export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
+@Component({
+	name: 'HomeView'
+})
+export default class HomeView extends Vue {
+	// THREE
+	private scene!: THREE.Scene;
+	private camera!: THREE.PerspectiveCamera;
+	private renderer!: THREE.WebGLRenderer;
+	// UTILS
+	private windowControl!: WindowControl;
+	private screenSize!: ScreenSize;
+	private keyboardControl!: KeyboardControl;
+	private timeout!: number;
+	private framerate = 1000 / 30;
+	// MODELS
+	private car!: Car;
+
+	public mounted () {
+		const target: HTMLElement|null = document.querySelector('#render-view');
+		// Init Utils
+		this.windowControl = new WindowControl(target);
+		this.screenSize = this.windowControl.screenSize();
+		// Init Three
+		this.scene = new THREE.Scene();
+		this.camera = new THREE.PerspectiveCamera(60, this.screenSize.ratio, 0.1, 500);
+		this.renderer = new THREE.WebGLRenderer();
+		this.setSize();
+		window.addEventListener('resize', this.setSize);
+		this.setCamera();
+
+		if (target) {
+			target.appendChild(this.renderer.domElement);
+			this.keyboardControl = new KeyboardControl(target);
+		}
+
+		this.scene.add(ground.mesh); // Add Ground
+		this.car = new Car(); // Create Car
+		this.scene.add(this.car.mesh); // Add Car
+		this.animate();
+	}
+
+	public beforeDestroy () {
+		window.clearTimeout(this.timeout);
+		this.keyboardControl.destroy();
+	}
+
+	private setSize () {
+		this.screenSize = this.windowControl.screenSize();
+		this.camera.aspect = this.screenSize.ratio;
+		this.renderer.setSize(this.screenSize.width, this.screenSize.height);
+	}
+
+	private setCamera () {
+		this.camera.position.z = 25;
+		this.camera.position.y = 5;
+	}
+
+	private calculate () {
+		this.car.calculate(this.keyboardControl.active);
+	}
+
+	private animate () {
+		this.calculate();
+		this.renderer.render(this.scene, this.camera); // Add View
+
+		this.timeout = window.setTimeout(() => {
+			this.animate();
+		}, this.framerate);
+	}
 }
 </script>
+
+<style lang="scss" scoped>
+#render-view {
+	width: 100vw;
+	height: 100vh;
+}
+</style>
