@@ -41,7 +41,7 @@ export default class Car {
 		}
 
 		if (chars.indexOf('S') !== -1) {
-			this.mesh.rotation.y -= this.brakeCoefficient / 25;
+			this.mesh.rotation.y += this.brakeCoefficient / 25;
 			this.mesh.position.z += Math.cos(this.mesh.rotation.y) * this.defaultSpeed;
 			this.mesh.position.x += Math.sin(this.mesh.rotation.y) * this.defaultSpeed;
 		}
