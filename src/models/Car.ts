@@ -4,7 +4,9 @@ export default class Car {
 	public mesh: THREE.Mesh;
 	private geometry: THREE.BoxGeometry;
 	private material: THREE.MeshBasicMaterial;
-	private defaultSpeed = 0.4;
+	private defaultAcceleration = 0.01;
+	private speed = 0;
+	private brakingSpeed = 1.2;
 	private brakeCoefficient = 0;
 	private maxBrakeCoefficient = 65 * Math.PI / 180;
 	private brakeCap = 0.05;
@@ -35,15 +37,31 @@ export default class Car {
 		}
 
 		if (chars.indexOf('Z') !== -1) {
-			this.mesh.rotation.y -= this.brakeCoefficient / 25;
-			this.mesh.position.z -= Math.cos(this.mesh.rotation.y) * this.defaultSpeed;
-			this.mesh.position.x -= Math.sin(this.mesh.rotation.y) * this.defaultSpeed;
+			if (this.speed < 0) {
+				this.speed /= this.brakingSpeed;
+			}
+			this.speed += this.defaultAcceleration;
 		}
 
 		if (chars.indexOf('S') !== -1) {
-			this.mesh.rotation.y += this.brakeCoefficient / 25;
-			this.mesh.position.z += Math.cos(this.mesh.rotation.y) * this.defaultSpeed;
-			this.mesh.position.x += Math.sin(this.mesh.rotation.y) * this.defaultSpeed;
+			if (this.speed > 0) {
+				this.speed /= this.brakingSpeed;
+			}
+			this.speed -= this.defaultAcceleration;
+		}
+
+		if (chars.indexOf('Z') === -1 && chars.indexOf('S') === -1) {
+			this.speed /= this.brakingSpeed;
+			if (Math.abs(this.speed) < this.defaultAcceleration) { this.speed = 0; }
+		}
+		if (this.speed !== 0) {
+			if (this.speed > 0) {
+				this.mesh.rotation.y -= this.brakeCoefficient / 25;
+			} else {
+				this.mesh.rotation.y += this.brakeCoefficient / 25;
+			}
+			this.mesh.position.z -= Math.cos(this.mesh.rotation.y) * this.speed;
+			this.mesh.position.x -= Math.sin(this.mesh.rotation.y) * this.speed;
 		}
 	}
 }
