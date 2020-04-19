@@ -5,6 +5,9 @@ export default class Car {
 	private geometry: THREE.BoxGeometry;
 	private material: THREE.MeshBasicMaterial;
 	private defaultSpeed = 0.4;
+	private brakeCoefficient = 0;
+	private maxBrakeCoefficient = 65 * Math.PI / 180;
+	private brakeCap = 0.01;
 
 	constructor () {
 		this.geometry = new THREE.BoxGeometry(1, 1, 2);
@@ -16,12 +19,25 @@ export default class Car {
 	}
 
 	public calculate (chars: string[]) {
+		// Check Brake Coefficient
+		if (chars.indexOf('Q') !== -1) {
+			this.brakeCoefficient -= 0.01;
+			if (this.brakeCoefficient < - this.maxBrakeCoefficient) { this.brakeCoefficient = - this.maxBrakeCoefficient; }
+		}
+
+		if (chars.indexOf('D') !== -1) {
+			this.brakeCoefficient += 0.01;
+			if (this.brakeCoefficient > this.maxBrakeCoefficient) { this.brakeCoefficient = this.maxBrakeCoefficient; }
+		}
+
 		if (chars.indexOf('Z') !== -1) {
-			this.mesh.position.z -= this.defaultSpeed;
+			this.mesh.position.z -= Math.cos(this.brakeCoefficient) * this.defaultSpeed;
+			this.mesh.position.x += Math.sin(this.brakeCoefficient) * this.defaultSpeed;
 		}
 
 		if (chars.indexOf('S') !== -1) {
-			this.mesh.position.z += this.defaultSpeed;
+			this.mesh.position.z += Math.cos(this.brakeCoefficient) * this.defaultSpeed;
+			this.mesh.position.x -= Math.sin(this.brakeCoefficient) * this.defaultSpeed;
 		}
 	}
 }
