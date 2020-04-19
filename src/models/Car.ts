@@ -2,10 +2,10 @@ import * as THREE from 'three';
 
 export default class Car {
 	public mesh: THREE.Mesh;
+	public speed = 0;
 	private geometry: THREE.BoxGeometry;
 	private material: THREE.MeshBasicMaterial;
 	private defaultAcceleration = 0.01;
-	private speed = 0;
 	private brakingSpeed = 1.2;
 	private brakeCoefficient = 0;
 	private maxBrakeCoefficient = 65 * Math.PI / 180;

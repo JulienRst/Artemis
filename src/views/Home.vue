@@ -9,6 +9,7 @@ import WindowControl, { ScreenSize } from '@/utils/WindowControl';
 import KeyboardControl from '@/utils/KeyboardControl';
 import ground from '@/models/Ground';
 import Car from '@/models/Car';
+import Ball from '@/models/Ball';
 
 @Component({
 	name: 'HomeView'
@@ -26,6 +27,7 @@ export default class HomeView extends Vue {
 	private framerate = 1000 / 30;
 	// MODELS
 	private car!: Car;
+	private ball!: Ball;
 
 	public mounted () {
 		const target: HTMLElement|null = document.querySelector('#render-view');
@@ -47,6 +49,8 @@ export default class HomeView extends Vue {
 		this.scene.add(ground.mesh); // Add Ground
 		this.car = new Car(); // Create Car
 		this.scene.add(this.car.mesh); // Add Car
+		this.ball = new Ball(); // Create Ball
+		this.scene.add(this.ball.mesh);
 		this.animate();
 	}
 
@@ -63,13 +67,14 @@ export default class HomeView extends Vue {
 
 	private setCamera () {
 		this.camera.position.x = this.car.mesh.position.x;
-		this.camera.position.y = this.car.mesh.position.y + 3;
+		this.camera.position.y = this.car.mesh.position.y + 2;
 		this.camera.position.z = this.car.mesh.position.z + 5;
 		this.camera.lookAt(this.car.mesh.position);
 	}
 
 	private calculate () {
 		this.car.calculate(this.keyboardControl.active);
+		this.ball.calculate([this.car]);
 	}
 
 	private animate () {
