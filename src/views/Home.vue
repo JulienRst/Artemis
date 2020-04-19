@@ -38,7 +38,6 @@ export default class HomeView extends Vue {
 		this.renderer = new THREE.WebGLRenderer();
 		this.setSize();
 		window.addEventListener('resize', this.setSize);
-		this.setCamera();
 
 		if (target) {
 			target.appendChild(this.renderer.domElement);
@@ -63,8 +62,10 @@ export default class HomeView extends Vue {
 	}
 
 	private setCamera () {
-		this.camera.position.z = 25;
-		this.camera.position.y = 5;
+		this.camera.position.x = this.car.mesh.position.x;
+		this.camera.position.y = this.car.mesh.position.y + 3;
+		this.camera.position.z = this.car.mesh.position.z + 5;
+		this.camera.lookAt(this.car.mesh.position);
 	}
 
 	private calculate () {
@@ -73,6 +74,7 @@ export default class HomeView extends Vue {
 
 	private animate () {
 		this.calculate();
+		this.setCamera();
 		this.renderer.render(this.scene, this.camera); // Add View
 
 		this.timeout = window.setTimeout(() => {
