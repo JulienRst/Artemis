@@ -22,24 +22,28 @@ export default class Car {
 		// Check Brake Coefficient
 		if (chars.indexOf('Q') !== -1) {
 			this.brakeCoefficient -= this.brakeCap;
-			this.mesh.rotation.y = - this.brakeCoefficient;
 			if (this.brakeCoefficient < - this.maxBrakeCoefficient) { this.brakeCoefficient = - this.maxBrakeCoefficient; }
 		}
 
 		if (chars.indexOf('D') !== -1) {
 			this.brakeCoefficient += this.brakeCap;
-			this.mesh.rotation.y = - this.brakeCoefficient;
 			if (this.brakeCoefficient > this.maxBrakeCoefficient) { this.brakeCoefficient = this.maxBrakeCoefficient; }
 		}
 
+		if (chars.indexOf('Q') === -1 && chars.indexOf('D') === -1) {
+			this.brakeCoefficient = 0;
+		}
+
 		if (chars.indexOf('Z') !== -1) {
-			this.mesh.position.z -= Math.cos(this.brakeCoefficient) * this.defaultSpeed;
-			this.mesh.position.x += Math.sin(this.brakeCoefficient) * this.defaultSpeed;
+			this.mesh.rotation.y -= this.brakeCoefficient / 25;
+			this.mesh.position.z -= Math.cos(this.mesh.rotation.y) * this.defaultSpeed;
+			this.mesh.position.x -= Math.sin(this.mesh.rotation.y) * this.defaultSpeed;
 		}
 
 		if (chars.indexOf('S') !== -1) {
-			this.mesh.position.z += Math.cos(this.brakeCoefficient) * this.defaultSpeed;
-			this.mesh.position.x -= Math.sin(this.brakeCoefficient) * this.defaultSpeed;
+			this.mesh.rotation.y -= this.brakeCoefficient / 25;
+			this.mesh.position.z += Math.cos(this.mesh.rotation.y) * this.defaultSpeed;
+			this.mesh.position.x += Math.sin(this.mesh.rotation.y) * this.defaultSpeed;
 		}
 	}
 }
