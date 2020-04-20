@@ -54,6 +54,8 @@ export default class Ball {
 					this.mesh.position.z < -(STADIUM_DEPTH / 2 + BALL_RADIUS)
 				) {
 					console.log('GOOOAAAAL');
+				} else {
+					// It's not completely in the goal !
 				}
 			} else {
 				this.speed.z = -this.speed.z;
