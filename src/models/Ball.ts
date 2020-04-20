@@ -24,9 +24,18 @@ export default class Ball {
 			// Detect if collision
 			if (car.mesh.position.distanceTo(this.mesh.position) < 2 + 1) {
 				this.speed = new Vector3();
-				this.speed.x = (this.mesh.position.x - car.mesh.position.x) * car.speed * 1.5;
-				this.speed.y = (this.mesh.position.y - car.mesh.position.y) * car.speed * 1.5;
-				this.speed.z = (this.mesh.position.z - car.mesh.position.z) * car.speed * 1.5;
+				this.speed.x = (this.mesh.position.x - car.mesh.position.x) * car.speed * 2;
+				this.speed.y = (this.mesh.position.y - car.mesh.position.y) * car.speed * 2;
+				this.speed.z = (this.mesh.position.z - car.mesh.position.z) * car.speed * 2;
+			}
+
+			// Detect Wall collision X
+			if (this.mesh.position.x > 23 || this.mesh.position.x < -23) {
+				this.speed.x = -this.speed.x;
+			}
+
+			if (this.mesh.position.z > 48 || this.mesh.position.z < -48) {
+				this.speed.z = -this.speed.z;
 			}
 
 			// Apply to speed of the ball

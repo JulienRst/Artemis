@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-class Ground {
+export class Ground {
 	public mesh: THREE.Mesh;
 	private geometry: THREE.PlaneGeometry;
 	private material: THREE.MeshBasicMaterial;

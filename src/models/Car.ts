@@ -19,7 +19,7 @@ export default class Car {
 		// Generate
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.mesh.position.y = 0.5;
-		this.mesh.position.z = 15;
+		this.mesh.position.z = 45;
 	}
 
 	public calculate (chars: string[]) {

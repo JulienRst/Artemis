@@ -7,9 +7,9 @@ import { Component, Vue } from 'vue-property-decorator';
 import * as THREE from 'three';
 import WindowControl, { ScreenSize } from '@/utils/WindowControl';
 import KeyboardControl from '@/utils/KeyboardControl';
-import ground from '@/models/Ground';
 import Car from '@/models/Car';
 import Ball from '@/models/Ball';
+import stadium, { Stadium } from '@/models/Stadium';
 
 @Component({
 	name: 'HomeView'
@@ -28,6 +28,7 @@ export default class HomeView extends Vue {
 	// MODELS
 	private car!: Car;
 	private ball!: Ball;
+	private stadium: Stadium = stadium;
 
 	public mounted () {
 		const target: HTMLElement|null = document.querySelector('#render-view');
@@ -46,11 +47,17 @@ export default class HomeView extends Vue {
 			this.keyboardControl = new KeyboardControl(target);
 		}
 
-		this.scene.add(ground.mesh); // Add Ground
 		this.car = new Car(); // Create Car
 		this.scene.add(this.car.mesh); // Add Car
 		this.ball = new Ball(); // Create Ball
 		this.scene.add(this.ball.mesh);
+		this.scene.add(this.stadium.ground.mesh);
+		this.stadium.walls.forEach((wall) => {
+			this.scene.add(wall.mesh);
+		});
+		this.stadium.goals.forEach((goal) => {
+			this.scene.add(goal.mesh);
+		});
 		this.animate();
 	}
 
