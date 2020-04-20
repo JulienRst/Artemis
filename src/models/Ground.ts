@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { STADIUM_WIDTH, STADIUM_DEPTH } from './constant';
 
 export class Ground {
 	public mesh: THREE.Mesh;
@@ -6,7 +7,7 @@ export class Ground {
 	private material: THREE.MeshBasicMaterial;
 
 	constructor () {
-		this.geometry = new THREE.PlaneGeometry(50, 100, 50, 100);
+		this.geometry = new THREE.PlaneGeometry(STADIUM_WIDTH, STADIUM_DEPTH, STADIUM_WIDTH / 4, STADIUM_DEPTH / 4);
 		this.material = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide, wireframe: true });
 		this.geometry.rotateX(Math.PI / 2);
 

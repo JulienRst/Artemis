@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { CAR_WIDTH, CAR_HEIGHT, CAR_DEPTH } from './constant';
 
 export default class Car {
 	public mesh: THREE.Mesh;
@@ -14,7 +15,7 @@ export default class Car {
 	private isJumping = false;
 
 	constructor () {
-		this.geometry = new THREE.BoxGeometry(1, 1, 2);
+		this.geometry = new THREE.BoxGeometry(CAR_WIDTH, CAR_HEIGHT, CAR_DEPTH);
 		this.material = new THREE.MeshNormalMaterial();
 		// Generate
 		this.mesh = new THREE.Mesh(this.geometry, this.material);

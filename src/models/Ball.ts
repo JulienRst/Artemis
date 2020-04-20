@@ -1,6 +1,15 @@
 import * as THREE from 'three';
 import Car from './Car';
 import { Vector3 } from 'three';
+import {
+	BALL_RADIUS,
+	BALL_DETAILS,
+	CAR_DEPTH,
+	STADIUM_WIDTH,
+	STADIUM_DEPTH,
+	GOAL_WIDTH,
+	GOAL_HEIGHT
+} from './constant';
 
 export default class Ball {
 	// Mesh
@@ -11,59 +20,82 @@ export default class Ball {
 	private speed = new THREE.Vector3();
 
 	constructor () {
-		this.geometry = new THREE.SphereGeometry(2, 16, 16);
+		this.geometry = new THREE.SphereGeometry(BALL_RADIUS, BALL_DETAILS, BALL_DETAILS);
 		this.material = new THREE.MeshNormalMaterial();
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 
 		// Default position
-		this.mesh.position.y = 2;
+		this.mesh.position.y = BALL_RADIUS;
 	}
 
 	public calculate (cars: Car[]) {
+		// Wall Collision
+		// Detect Wall collision X
+		if (
+			this.mesh.position.x > (STADIUM_WIDTH / 2 - BALL_RADIUS) ||
+			this.mesh.position.x < - (STADIUM_WIDTH / 2 - BALL_RADIUS)
+		) {
+			this.speed.x = -this.speed.x;
+		}
+
+		// Detect Wall collision Z
+		if (
+			this.mesh.position.z > (STADIUM_DEPTH / 2 - BALL_RADIUS) ||
+			this.mesh.position.z < - (STADIUM_DEPTH / 2 - BALL_RADIUS)
+		) {
+			// Detect if it's goal collision
+			if (
+				this.mesh.position.x < (GOAL_WIDTH / 2 - BALL_RADIUS) &&
+				this.mesh.position.x > - (GOAL_WIDTH / 2 - BALL_RADIUS) &&
+				this.mesh.position.y < (GOAL_HEIGHT - BALL_RADIUS)
+			) {
+				if (
+					this.mesh.position.z > (STADIUM_DEPTH / 2 + BALL_RADIUS) ||
+					this.mesh.position.z < -(STADIUM_DEPTH / 2 + BALL_RADIUS)
+				) {
+					console.log('GOOOAAAAL');
+				}
+			} else {
+				this.speed.z = -this.speed.z;
+			}
+		}
+
+		// Car collision
 		cars.forEach((car) => {
 			// Detect if collision
-			if (car.mesh.position.distanceTo(this.mesh.position) < 2 + 1) {
+			if (car.mesh.position.distanceTo(this.mesh.position) < BALL_RADIUS + CAR_DEPTH / 2) {
 				this.speed = new Vector3();
 				this.speed.x = (this.mesh.position.x - car.mesh.position.x) * car.speed * 2;
 				this.speed.y = (this.mesh.position.y - car.mesh.position.y) * car.speed * 2;
 				this.speed.z = (this.mesh.position.z - car.mesh.position.z) * car.speed * 2;
 			}
 
-			// Detect Wall collision X
-			if (this.mesh.position.x > 23 || this.mesh.position.x < -23) {
-				this.speed.x = -this.speed.x;
-			}
-
-			if (this.mesh.position.z > 48 || this.mesh.position.z < -48) {
-				this.speed.z = -this.speed.z;
-			}
-
 			// Apply to speed of the ball
 			if (this.speed.distanceTo(new Vector3()) > 0) {
 				// Apply Gravity
-				if (this.mesh.position.y > 2) {
+				if (this.mesh.position.y > BALL_RADIUS) {
 					this.speed.y -= 0.08;
 				}
 
 				if (Math.abs(this.speed.x) < 0.001 && Math.abs(this.speed.y) < 0.001 && Math.abs(this.speed.z) < 0.001) {
 					this.speed = new Vector3();
 				} else {
-					// Apply frottement
+					// Apply friction
 					this.speed.divideScalar(1.05);
-				}
-
-				// Apply to model
-				this.mesh.position.x += this.speed.x;
-				this.mesh.position.y += this.speed.y;
-				this.mesh.position.z += this.speed.z;
-
-				if (this.mesh.position.y < 2) {
-					this.mesh.position.y = 2;
-					if (Math.abs(this.speed.y) > 0.1) {
-						this.speed.y = -this.speed.y / 2;
-					}
 				}
 			}
 		});
+
+		// Apply to model
+		this.mesh.position.x += this.speed.x;
+		this.mesh.position.y += this.speed.y;
+		this.mesh.position.z += this.speed.z;
+
+		if (this.mesh.position.y < BALL_RADIUS) {
+			this.mesh.position.y = BALL_RADIUS;
+			if (Math.abs(this.speed.y) > 0.1) {
+				this.speed.y = -this.speed.y / 2;
+			}
+		}
 	}
 }
