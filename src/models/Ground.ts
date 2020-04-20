@@ -6,7 +6,7 @@ class Ground {
 	private material: THREE.MeshBasicMaterial;
 
 	constructor () {
-		this.geometry = new THREE.PlaneGeometry(50, 50, 50, 50);
+		this.geometry = new THREE.PlaneGeometry(50, 100, 50, 100);
 		this.material = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide, wireframe: true });
 		this.geometry.rotateX(Math.PI / 2);
 
